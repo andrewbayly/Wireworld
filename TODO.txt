@@ -1,0 +1,44 @@
+TODO
+- draw the board - DONE
+- compute the next step - DONE
+- scale up to an 800x600 board - is my algo fast enough??? - DONE
+- loader
+  - load computer file into memory, and see it run and generate primes
+    - transform the .wi file into JSON - DONE
+      - write a program transform which loads the file - DONE
+        - and outputs a JSON: WIREWORLD = ["xxx" ... ]; 
+    - load the JSON file into the browser
+    - how fast is it?? 10-20 mins per prime
+      1:08 - 2
+      1:21 - 0
+      1:22 - 3
+      1:55 - 0
+      1:57 - 5
+  - write routine to clear the registers - DONE!
+  - write routine that takes a set of byte codes and copies them into the registers - DONE!
+  - test out with the primes program 
+  - write the display program - DONE!
+  - test out with the display program - DONE!
+
+
+IDEAS
+- loader - DONE!
+  - loads a specific sequence of bytecodes into the machine, and lets it run. 
+- simple programs
+  - display a number, repeatedly - DONE!
+  - counter - counts out the integers and displays them
+  - fibonacci generator - generates the fibonacci sequence
+- assembler
+  - translates assembly language instructions into byte code
+- emulator
+  - runs a sequence of byte-codes in JavaScript Virtual Machine
+- User Input
+  - allows user to enter values into the registers from the keyboard
+    typically these will be values and/or the program counter enabling
+    me to build a calculator that adds numbers and displays the result.
+  - calculator  
+- Wire
+  - Write a High Level Language that compiles to byte code that can 
+    be run on the emulator or the computer itself
+    
+        
