@@ -1,6 +1,6 @@
 # Wireworld
 
-[LIVE DEMO]
+[LIVE DEMO](https://andrewbayly.github.io/Wireworld/index.html "Live Demo")
 
 The folks at https://www.quinapalus.com/wi-index.html describe a Wireworld computer
 that calculates primes. I took the design of the computer, and ran it on my own 
