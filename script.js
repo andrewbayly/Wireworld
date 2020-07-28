@@ -37,17 +37,19 @@ function drawGrid(slice) {
   const square = 2; 
   const colors = [ "#000000", "#FFFFFF", "#0000FF", "#FF0000"];   
 
+
   var mini = 0; 
   var maxi = grid[slice].length; 
   var minj = 0; 
   var maxj = grid[slice][0].length; 
 
 /*
-  var mini = 0; 
+  var mini = 38; 
   var maxi = 150; 
-  var minj = 600; 
+  var minj = 641; 
   var maxj = 800; 
 */  
+
   for(var i = mini; i < maxi; i++){ 
     for(var j = minj; j < maxj; j++){ 
       var x = j * square; 
@@ -164,8 +166,11 @@ function initialize(){
     }
   }
   
+  //break the top wire: 
+  //grid[0][38][641] = 0; 
+  
   //now load the program into the registers
-  var program = PROGRAM ; 
+  var program = assemble(PROGRAM) ; 
 
 /**
   var program = [

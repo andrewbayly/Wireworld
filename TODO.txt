@@ -20,6 +20,8 @@ TODO
   - write the display program - DONE!
   - test out with the display program - DONE!
 
+- write the assembler
+
 
 IDEAS
 - loader - DONE!
@@ -28,7 +30,7 @@ IDEAS
   - display a number, repeatedly - DONE!
   - counter - counts out the integers and displays them
   - fibonacci generator - generates the fibonacci sequence
-- assembler
+- assembler - DONE!
   - translates assembly language instructions into byte code
 - emulator
   - runs a sequence of byte-codes in JavaScript Virtual Machine
@@ -38,7 +40,19 @@ IDEAS
     me to build a calculator that adds numbers and displays the result.
   - calculator  
 - Wire
-  - Write a High Level Language that compiles to byte code that can 
-    be run on the emulator or the computer itself
+  - Write a High Level Language that compiles to assembler that can 
+    be run on the computer itself. 
+  - Wire will be a subset of JavaScript. This enables me to debug programs
+    that I've written in Wire by compiling them as JavaScript together with 
+    a standard library (also written in JavaScript).
+  - let's start with a program that is a counter: 
+  
+counter = 0; 
+while(true){ 
+  display(counter);  
+  counter = counter + 1;
+}      
+
+//stop by looping    
     
         
