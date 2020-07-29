@@ -45,7 +45,10 @@ IDEAS
   - Wire will be a subset of JavaScript. This enables me to debug programs
     that I've written in Wire by compiling them as JavaScript together with 
     a standard library (also written in JavaScript).
-  - let's start with a program that is a counter: 
+  - let's start with a program displays values: - DONE!
+      display(5555); 
+      display(1); 
+  - next ... fibonacci or counter - DONE!
   
 counter = 0; 
 while(true){ 

@@ -128,12 +128,12 @@ async function start(){
     var start = new Date(); 
     step(from, to); 
     var elapsed = new Date() - start ; 
-    console.log('grid elapsed = ' + elapsed); 
+    //console.log('grid elapsed = ' + elapsed); 
   
     start = new Date(); 
     drawGrid(to); 
     elapsed = new Date() - start ; 
-    console.log('draw elapsed = ' + elapsed); 
+    //console.log('draw elapsed = ' + elapsed); 
   
     await sleep(10); 
           
@@ -153,7 +153,7 @@ function sleep(ms) {
 function initialize(){ 
   expandGrid(600, 800);
 
-  console.log('wireworld length = ' + WIREWORLD.length);
+  //console.log('wireworld length = ' + WIREWORLD.length);
 
   //load the computer from the JSON file
   var map = { " " : 0, "#" : 1, "~" : 2, "@" : 3 };  
@@ -203,6 +203,7 @@ function initialize(){
     program[i] = hexToBin(program[i]); 
   }
 
+  console.log('binary:'); 
   console.log(program); 
 
   //shift enough bits given the register, so that the first bit is
@@ -231,7 +232,7 @@ function initialize(){
   offsetX_blue = [[-1], [-1], [-1], [-1], [-1], [-1], [-1], [-1, -2, -3], [1], [1], [1], [1], [1], [1], [1], [1]];  
   offsetY_blue = [[0], [0], [0], [0], [0], [0], [0],        [1,  1, 1], [0], [0], [0], [0], [0], [0], [0], [0]];  
 
-  for(var register = 1; register <= 42; register++){ 
+  for(var register = 1; register <= 52; register++){ 
     var bits = program[register]; 
     for(var bitPos = 0; bitPos < 16; bitPos++){ 
       var bit = bits[bitPos]; 

@@ -19,19 +19,60 @@ PROGRAM = [
 
 **/
 
+/**
+//fibonacci series
+PROGRAM = [
+"var a = 1;",    //initializer
+"var b = 1;",
+"var c = 0;", 
+"display(1);",   //display
+"display(b);", 
+"", 
+"while(true){",  //whileOpen
+"  c = a + b ;", //add 
+"  a = b;",      //assignment 
+"  b = c;",      
+"  display(b);", 
+"}"              //whileClose
+];
+**/ 
+
+//'  = _ "var" _ var:variable _ "=" _ value:integer _ ";" _ { return {statementType : "initializer", var : var, value:value}; }',
 
 
-function compile(program){ 
-
-  var grammar = [  
+GRAMMAR = [  
 'start',
-'  = display *',
+'  = statement *',
+'',
+'statement',
+'  = display / initializer / whileOpen / whileClose / assignment / add',
 '',
 'display',
-'  = _ "display(" _ arg:integer _ ")" _ ";" _ { return {statementType : "display", arg : arg}; }',
+'  = _ "display(" _ arg:value _ ")" _ ";" _ { return {statementType : "display", arg : arg}; }',
+'',
+'initializer',
+'  = _ "var" _ VAR:variable _ "=" _ value:integer _ ";" _ { return {statementType : "initializer", VAR : VAR, value:value}; }', 
+'',
+'whileOpen',
+'  = _ "while(" _ "true" _ ")" _ "{" _ { return {statementType : "whileOpen"}; }',
+'',
+'whileClose',
+'  = _ "}" _ { return {statementType : "whileClose"}; }',
+'',
+'assignment',
+'  = _ to:variable _ "=" _ from:value _ ";" _ { return {statementType : "assignment", to:to, from:from}; }',
+'',
+'add',
+'  = _ to:variable _ "=" _ from1:value _ "+" _ from2:value _ ";" _ { return {statementType : "add", to:to, from1:from1, from2:from2}; }',
+'',
+'value', 
+' = integer / variable', 
 '',
 'integer "integer"',
 '  = digits:[0-9]+ { return parseInt(digits.join(""), 10); }',  
+'',
+'variable',
+'  = letters:[a-z]+ { return letters.join(""); }',  
 '',
 // optional whitespace
 '_',
@@ -40,63 +81,107 @@ function compile(program){
 // mandatory whitespace
 '__',
 ' = [ \\t\\r\\n]+'
-].join('\n');   
+]; 
+
+function parse(program){ 
+  var grammar = GRAMMAR.join('\n');   
 
   var parser = peg.generate(grammar);
-  console.log(parser); 
+  //console.log(parser); 
 
   var text = program.join("\n");
   
+  console.log('program:'); 
+  console.log(text); 
+  
   var output = parser.parse(text); 
+  console.log('parser output: '); 
   console.log(output); 
-  
-  console.log(output[0].arg); 
-  
-  //first pass, work out how many MOV instructions we need 
-  var movCount = 0; 
-  for(var i = 0; i < output.length; i++){ 
-    if(output[i].statementType == 'display')
-      movCount++; 
-  }
-  
-  //add two for stop 
-  movCount += 2;  
-  
-  //var movCount = 3;
-  //var valuesCount = 2; //not required
+
+  return output; 
+}
+
+function compile(program){ 
+
+  var statements = parse(program);  
   
   var movCounter = 1; 
-  var valuesCounter = movCount+1; 
+  var valuesCounter = 52; 
   
-  //second pass - build the instructions: 
+  //only one pass! - build the instructions: 
   var movs = []; 
   var values = []; 
+  
+  //maps variables to their locations
+  var variableMap = {}; 
+  
+  //location of the last while loop found:
+  whileOpen = null; 
     
   //statements: 
-  for(var i = 0; i < output.length; i++){ 
-    if(output[i].statementType == 'display'){ 
-      movs.push(MOV(0, valuesCounter));
-      valuesCounter++;  
-      values.push('' + output[i].arg)
+  for(var i = 0; i < statements.length; i++){ 
+    var statement = statements[i]; 
+  
+    if(statement.statementType == 'display'){
+      var register = getRegister(statement.arg);
+      movs.push(MOV(0, register));
+      movCounter++; 
+    }
+    else if(statement.statementType == 'initializer'){ 
+      values.unshift('' + statement.value + ' ; ' + statement.VAR)
+      variableMap[statement.VAR] = valuesCounter;
+      valuesCounter--;  
+    }
+    else if(statement.statementType == 'whileOpen'){ 
+      whileOpen = movCounter;     
+    }
+    else if(statement.statementType == 'whileClose'){ 
+      values.unshift('' + whileOpen); 
+      movs.push(MOV(63, valuesCounter)); 
+      valuesCounter--
+      movCounter++; 
+    
+      movs.push(MOV(1, 1)); 
+      movCounter++; 
+    }
+    else if(statement.statementType == 'assignment'){ 
+      var from = getRegister(statement.from); 
+      var to = getRegister(statement.to); 
+      movs.push(MOV(to, from)); 
+      movCounter++; 
+    }
+    else if(statement.statementType == 'add'){ 
+      var to = getRegister(statement.to); 
+      var from1 = getRegister(statement.from1); 
+      var from2 = getRegister(statement.from2); 
+      movs.push(MOV(60, from1)); 
+      movCounter++; 
+      movs.push(MOV(61, from2)); 
+      movCounter++; 
+      movs.push(MOV(to, 61)); 
       movCounter++; 
     }
   }  
   
   //stop:
   movs.push(MOV(63, valuesCounter)); 
-  valuesCounter++; 
-  values.push('' + movCounter)
+  values.unshift('' + movCounter)
+  valuesCounter--; 
   movCounter++; 
+  
   movs.push(MOV(1, 1)); 
   movCounter++; 
   
-  var result = movs.concat(values); 
+  var result = movs; 
+  while(result.length + values.length < 52)
+    result.push(0); 
+  result = result.concat(values); 
   
   for(var i = 0; i < result.length; i++){ 
     result[i] = '' + (i + 1) + ' ' + result[i]; 
   }
   
-  console.log(result); 
+  //console.log(result); 
 
 /*
   var result = [
@@ -108,10 +193,27 @@ function compile(program){
   ];  
 */  
   
+  console.log('assembler:')
+  console.log(result.join('\n')); 
+  
   return result;
   
   function MOV(Rd, Rs){ 
     return "MOV R" + Rd + " R" + Rs ; 
+  }
+
+  function getRegister(value){ 
+    var result = null; 
+    if(typeof value == 'number'){ 
+      values.unshift('' + value)
+      result = valuesCounter;
+      valuesCounter--;  
+    }  
+    else
+    {
+      result = variableMap[value]; 
+    }
+    return result; 
   }
    
 }

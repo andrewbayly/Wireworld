@@ -41,6 +41,7 @@ function assemble(program){
     result.push( convert( program[i] )); 
   }
   
+  console.log('byte code:'); 
   console.log(result); 
   
   return result; 
