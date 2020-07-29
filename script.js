@@ -170,7 +170,8 @@ function initialize(){
   //grid[0][38][641] = 0; 
   
   //now load the program into the registers
-  var program = assemble(PROGRAM) ; 
+  var assembly = compile(PROGRAM); 
+  var program = assemble(assembly) ; 
 
 /**
   var program = [

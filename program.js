@@ -1,92 +1,114 @@
-/*
-PROGRAM = [
-   null,   //register 0 is unused
-  "0005",  //1: set display to 5555
-  "3F04",  //2: branch to 2 
-  "1414",  //3: no-op in delay slot
-  "0002",  //4: branch destination
-  "15B3"   //5: 5555 decimal
-];
-*/ 
+/**
+program which copies 5555 into the display and then stops
 
 PROGRAM = [
 "1   MOV R0 R5   ; set display to 5555",  
 "2   MOV R63 R4  ; branch to 2",    
-"3   MOV R20 R20 ; no-op in delay slot",  
+"3   MOV R1 R1   ; no-op in delay slot",  
 "4   2           ; branch destination",   
 "5   5555        ; constant to display (5555)"  
 ]; 
+**/
+
+
+PROGRAM = [
+"display( 5555 );",
+"display(1);" 
+]; 
 
 /*
+//fibonacci series
 PROGRAM = [
-   null,   //register 0 is unused
-  "3F28",  //1 MOV R63 R40 ;branch to 1
-  "0014",  //2 MOV R0 R20  ;set display to 5555 
-  "0000",  //3             ; unused
-  "0000",  //4             ; unused
-  "0000",  //5             ; unused
-  "0000",  //6             ; unused
-  "0000",  //7             ; unused
-  "0000",  //8             ; unused
-  "0000",  //9             ; unused
-  "0000",  //10            ; unused
-  "0000",  //11            ; unused
-  "0000",  //12            ; unused
-  "0000",  //13            ; unused
-  "0000",  //14            ; unused
-  "0000",  //15            ; unused
-  "0000",  //16            ; unused
-  "0000",  //17            ; unused
-  "0000",  //18            ; unused
-  "0000",  //19            ; unused
-  
-  "15B3",  //20 5555       ;constant 5555
-
-  "0000",  //21            ; unused
-  "0000",  //22            ; unused
-  "0000",  //23            ; unused
-  "0000",  //24            ; unused
-  "0000",  //25            ; unused
-  "0000",  //26            ; unused
-  "0000",  //27            ; unused
-  "0000",  //28            ; unused
-  "0000",  //29            ; unused
-  "0000",  //30            ; unused
-  "0000",  //31            ; unused
-  "0000",  //32            ; unused
-  "0000",  //33            ; unused
-  "0000",  //34            ; unused
-  "0000",  //35            ; unused
-  "0000",  //36            ; unused
-  "0000",  //37            ; unused
-  "0000",  //38            ; unused
-  "0000",  //39            ; unused
-  
-  "0001",  //40 1          ;branch 1
-  
-]; 
-*/
-
+"var a = 1;", 
+"var b = 1;",
+"var c = 0;", 
+"display(a);", 
+"display(b);", 
+"",
+"while(true){", 
+"  c = a + b ;", 
+"  a = b;", 
+"  b = c;", 
+"  display(b);",
+"}"
+];
+*/ 
 
 /**
+//counter:
 PROGRAM = [
-  'MOV R63 R4',  //1. branch to 1
-  'MOV R0 R3',   //2. display 5555
-  '5555',        //3. constant 5555
-  '1',           //4. branch target 1  
+"var counter = 0;", 
+"",
+"while(true){",
+"  display(counter);",  
+"  counter = counter + 1;", 
+"}"      
 ]; 
 **/
 
 /**
+ast = [ 
+ { statements: [  
+    { type : 'displayStatement', 
+      argument: { type : 'constant', value : 5555 }
+      space : 1 //3 instructions  
+    }, 
+    { type : 'assignmentStatement', 
+      lhs: { type : 'variable', name : 'counter' }, 
+      rhs: { type : 'expression', 
+             operator : '+', 
+             operands : [ 
+               { type : 'variable', name : 'counter' },
+               { type : 'constant', value : 1 }
+             ]
+           } 
+      space : 3     
+    } 
+  ]
+ } 
+]
+**/
+
+/**
+//counter program (working version!)
 PROGRAM = [
-"MOV R0 R7",     //1. send R7 (counter) to the display
-"MOV R60 R7",    //2. send counter to R60 (adder input 1)
-"MOV R61 R8",    //3. send R8 (1) to adder input 2
-"MOV R7 R61",    //4. send the addition result to counter
-"MOV R63 R9",    //5. move R9 (R1 address) to jump back to the beginning
-"MOV R0 R7",     //6. send counter to display again (branch delay)
-"0",             //7. contains counter
-"1",             //8. 1 for incrementing
-"1"              //9. jump target: R1
+"1   MOV R0 R7   ; send R7 (counter) to the display", 
+"2   MOV R60 R7  ; send counter to R60 (adder input 1)",     
+"3   MOV R61 R8  ; send R8 (1) to adder input 2",     
+"4   MOV R7 R61  ; send the addition result to counter",   
+"5   MOV R63 R9  ; move R9 (R1 address) to jump back to the beginning",  
+"6   MOV R0 R7   ; send counter to display again (branch delay)",     
+"7   0           ; contains counter",              
+"8   1           ; 1 for incrementing",             
+"9   1           ; jump target: R1"              
 ]; 
 **/
+
+/**
+//counter program (modified version!)
+PROGRAM = [
+"1   MOV R0 R7   ; while start: [display(counter)]"
+"2   MOV R60 R7  ; send counter to R60 (adder input 1) [... = counter + ...]",     
+"3   MOV R61 R8  ; send R8 (1) to (adder input 2) [... = ... + 1] ",     
+"4   MOV R7 R61  ; send the addition result to counter [counter = ...]",   
+"5   MOV R63 R9  ; jump to while start",  
+"6   MOV R1 R1   ; no-op (branch delay)",     
+"7   0           ; [counter = 0]",              
+"8   1           ; constant 1",             
+"9   1           ; jump target: R1"              
+]; 
+
+var counter = 0; 
+
+while(true){ 
+  display(counter);  
+  counter = counter + 1;
+}      
+
+//stop by looping??    
+**/  
+
+
+
+
+

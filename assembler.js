@@ -1,5 +1,5 @@
 /**
-Assember - takes instructions written in assembly language
+Assembler - takes instructions written in assembly language
 and converts them into hex representation ready to be loaded
 into the computer. Note that the assembler construct must include
 lines sequentially from 1 to the max line used. If any registers
