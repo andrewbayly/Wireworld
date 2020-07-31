@@ -1,5 +1,71 @@
 
+/**
+//test client
+PROGRAM = { A : [
+"var a = 0;",
+"a = read(2);",  
+"write(1, a);" 
+], 
 
+//test server
+B : [
+"write(2, 1234);"   
+] 
+};
+*/
+
+//test client
+//problem - the code fails when the server tries to broadcast the
+//sum back to the client - the client doesn't pick up the message.
+PROGRAM = { A : [
+"var a = 0; ", 
+"var b = 0; ",
+"var sum = 0; ",
+"a = read(1);",
+"b = read(1);",
+"write(2, a);",  
+"write(2, b);",
+"sum = read(2);",
+"write(1, sum);"  
+], 
+
+//test server
+B : [
+"var a = 0; ", 
+"var b = 0; ", 
+"var sum = 0; ", 
+"a = read(2);",
+"b = read(2);",
+"sum = a + b;",
+"write(2, sum);"   
+] 
+};
+
+
+/**
+Works!!!
+//test client
+PROGRAM = { A : [
+"write(2, 5);",  
+"write(2, 4);" 
+], 
+
+//test server
+B : [
+"var a = 0; ", 
+"var b = 0; ", 
+"var sum = 0; ", 
+"a = read(2);",
+"b = read(2);",
+"sum = a + b;",
+"write(1, sum);"   
+] 
+};
+**/
+
+/**
+
+//Works!!!
 //test client
 PROGRAM = { A : [
 "write(2, 1234);" 
@@ -12,6 +78,8 @@ B : [
 "write(1, a);"   
 ] 
 };
+
+**/
 
 
 

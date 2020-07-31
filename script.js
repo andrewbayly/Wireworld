@@ -1,4 +1,15 @@
 
+
+const channel = new BroadcastChannel('foo');
+
+channel.onmessage = function(e) {
+  const message = e.data;
+  console.log('received: ' + message); 
+      
+  readQueue2.push(message-0);
+};
+
+
 /*
 var grid = [[
   [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ], 
@@ -59,7 +70,7 @@ function drawGrid(slice) {
       maxj = gridSpan[i].maxj; 
     }
     
-    for(var j = minj; j < maxj; j++){ 
+    for(var j = minj; j <= maxj; j++){ 
       var x = j * square; 
       var y = i * square;
       if(grid[slice][i][j] != grid[oldSlice][i][j] || firstSlice){ 
@@ -255,7 +266,9 @@ function checkIO(){
   else if(flag == 4){ 
     var value = binToDec(readValueFromRegister(52));
  
-    channel.broadcast('demo_trigger', value); 
+    channel.postMessage(value);
+    //channel.broadcast('demo_trigger', value);
+    console.log('broadcast value: ' + value);  
        
     //clear the flag
     copyValueToRegister(decToBin(0), 51 );   

@@ -21,9 +21,10 @@ TODO
   - test out with the display program - DONE!
 - write the assembler - DONE
 
-- prototype the primes program in Wire and run on JS.
-- translate the JS into Assembler ( & run it ).
-- extend the Wire compiler accordingly
+- wire development
+   - prototype the primes program in Wire and run on JS.
+   - translate the JS into Assembler.
+   - extend the Wire compiler accordingly
 
 - write (console) - DONE
   - add write to grammar
@@ -41,6 +42,12 @@ TODO
        queue, then write zero to 52
      - read copies 52 to destination
      - testing - set values in the read queue   
+- read and write to other computer   
+   - testing!!!
+   
+
+
+
       
 
 IDEAS
