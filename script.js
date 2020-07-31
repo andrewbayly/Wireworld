@@ -16,6 +16,7 @@ var grid = [[
 */
 
 var grid = [[],[]]; 
+var gridSpan = []; 
 
 /**
   rules:
@@ -52,12 +53,18 @@ function drawGrid(slice) {
 */  
 
   for(var i = mini; i < maxi; i++){ 
+ 
+    if(!firstSlice){ 
+      minj = gridSpan[i].minj; 
+      maxj = gridSpan[i].maxj; 
+    }
+    
     for(var j = minj; j < maxj; j++){ 
       var x = j * square; 
       var y = i * square;
       if(grid[slice][i][j] != grid[oldSlice][i][j] || firstSlice){ 
         ctx.fillStyle = colors[grid[slice][i][j]];
-        ctx.fillRect(x - minj * square, y - mini * square, square, square);
+        ctx.fillRect(x, y, square, square);
       }  
     }
   }
@@ -72,7 +79,8 @@ gen++;
 //console.log('gen = ' + gen); 
 
   for(var i = 1; i < grid[from].length-1; i++){ 
-    for(var j = 1; j < grid[from][1].length-1; j++){ 
+    for(var j = gridSpan[i].minj; j <= gridSpan[i].maxj; j++){
+//    for(var j = 1; j < grid[from][1].length-1; j++){ 
       var fromValue = grid[from][i][j];
       var toValue = 0; 
       if(fromValue == 0)
@@ -116,6 +124,22 @@ function expandGridSlice(slice, rows, cols){
   }
 }
 
+function contractGrid(rows, cols){ 
+  contractGridSlice(0, rows, cols); 
+  contractGridSlice(1, rows, cols); 
+}
+
+function contractGridSlice(slice, rows, cols){ 
+  while(grid[slice].length > rows)
+    grid[slice].pop(); 
+  
+  for(var i = 0; i < rows; i++){ 
+    while(grid[slice][i].length > cols)
+      grid[slice][i].pop(); 
+  }
+}
+
+
 STARTED = false; 
 
 PAUSED = false; 
@@ -135,43 +159,58 @@ async function start(){
   while(STARTED){
   
     if(!PAUSED){  
-    //console.log(k); 
-    var start = new Date(); 
-    step(from, to); 
-    var elapsed = new Date() - start ; 
-    //console.log('grid elapsed = ' + elapsed); 
+      var start = new Date(); 
+    
+      //console.log(k); 
+      step(from, to); 
   
-    start = new Date(); 
-    drawGrid(to); //don't draw anything 
-    elapsed = new Date() - start ; 
-    //console.log('draw elapsed = ' + elapsed); 
+      drawGrid(to); //don't draw anything 
           
-    var temp = from; 
-    from = to; 
-    to = temp; 
+      var temp = from; 
+      from = to; 
+      to = temp; 
 
-    if(gen % 96 == 0){ 
-      checkIO(); 
-    }
+      if(gen % 96 == 0){ 
+        checkIO(); 
+      }
+    
+      var elapsed = new Date() - start ; 
+      //console.log('elapsed = ' + elapsed); 
 
     }
     
     //paused means we are waiting for data to read
     if(PAUSED){ 
-      if(readQueue.length > 0){ 
-        var value = readQueue.shift();
+      if(PAUSED_STATE == 1){ 
+        if(readQueue1.length > 0){ 
+          var value = readQueue1.shift();
         
-        //store value
-        copyValueToRegister(decToBin(value), 52 );   
+          //store value
+          copyValueToRegister(decToBin(value), 52 );   
 
-        //clear the flag
-        copyValueToRegister(decToBin(0), 51 );     
+          //clear the flag
+          copyValueToRegister(decToBin(0), 51 );     
       
-        PAUSED = false; 
+          PAUSED = false; 
+        }
+      }
+      else
+      { 
+        if(readQueue2.length > 0){ 
+          var value = readQueue2.shift();
+        
+          //store value
+          copyValueToRegister(decToBin(value), 52 );   
+
+          //clear the flag
+          copyValueToRegister(decToBin(0), 51 );     
+      
+          PAUSED = false; 
+        }
       }
     }
     
-    await sleep(10); 
+    await sleep(1); 
 
   }
 }
@@ -180,7 +219,9 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-var readQueue = []; 
+var readQueue1 = []; 
+
+var readQueue2 = []; 
 
 function checkIO(){ 
   //once we are here, we can assume that we are operating on grid 0
@@ -208,10 +249,16 @@ function checkIO(){
     
   }
   else if(flag == 3){ 
-  
+    PAUSED = true; 
+    PAUSED_STATE = 2; 
   }
   else if(flag == 4){ 
-  
+    var value = binToDec(readValueFromRegister(52));
+ 
+    channel.broadcast('demo_trigger', value); 
+       
+    //clear the flag
+    copyValueToRegister(decToBin(0), 51 );   
   }
 
   //set firstSlice to true so that the grid will 
@@ -257,7 +304,8 @@ function readValueFromRegister(register){
 
   var bits = []; 
   
-  var originX = 689 - 6 * register; 
+  //var originX = 689 - 6 * register; 
+  var originX = 499 - 6 * register; 
   var originY = 61 + 6 * register;
 
   for(var bitPos = 0; bitPos < 16; bitPos++){ 
@@ -289,7 +337,7 @@ function copyValueToRegister(value, register){
 
   //draw the bits onto the grid using the following formula: 
   //originXY + headXY + offsetXY
-  var originX = 689 - 6 * register; 
+  var originX = 499 - 6 * register; 
   var originY = 61 + 6 * register;
 
   var bits = value; 
@@ -312,8 +360,8 @@ function copyValueToRegister(value, register){
 }
 
 
+function initializeGrid(){ 
 
-function initialize(){ 
   expandGrid(600, 800);
 
   //console.log('wireworld length = ' + WIREWORLD.length);
@@ -340,31 +388,50 @@ function initialize(){
     }
     maxj--;
   }
+  
+  //shift the computer to the left
+  var offset = 190; 
+  for(var i = 0; i < 600; i++){ 
+    for(var j = offset; j < 800; j++){ 
+      grid[0][i][j-offset] = grid[0][i][j]; 
+    }
+  }
+  for(var i = 0; i < 600; i++){ 
+    for(var j = 800 - offset; j < 800; j++){ 
+      grid[0][i][j] = 0; 
+    }
+  }
+  
+  contractGrid(600, 600); 
  
+  //calculate gridSpan 
+  for(var i = 0; i < grid[0].length; i++){ 
+    var obj = { minj:0, maxj:0}; 
+    var j = 0; 
+    while(j < grid[0][0].length - 1 && grid[0][i][j] == 0)
+      j++; 
+    obj.minj = j; 
+    
+    j = grid[0][0].length -1; 
+    while(j > 0 && grid[0][i][j] == 0)
+      j--; 
+    obj.maxj = j; 
+    
+    gridSpan.push(obj); 
+  }
+  
+  console.log(gridSpan); 
+  
+}
+
+
+
+function initialize(){ 
+  initializeGrid(); 
   
   //now load the program into the registers
-  var assembly = compile(PROGRAM); 
+  var assembly = compile(PROGRAM[getProgram()]); 
   var program = assemble(assembly) ; 
-
-/**
-  var program = [
-    null, //register 0 is unused
-    "3C0B", 
-    "3D0C",
-    "3D3D",
-    "003D",
-    "3F0D",
-    "0000",
-    "0000",
-    "0000",
-    "0000",
-    "0000",
-    "0001",
-    "0001",
-    "0003"
-  ]; 
-**/
-
   
   //pad out the program with zeros
   while(program.length < 43){ 
@@ -382,7 +449,6 @@ function initialize(){
   for(var i = 1; i < program.length; i++){ 
     copyValueToRegister(program[i], i); 
   }
-  
   
 
   function hexToBin(hex){ 
@@ -424,10 +490,13 @@ start();
 function clickEnter(){ 
   var value = document.getElementById("read").value;
   value = value - 0; 
-  readQueue.push(value);  
+  readQueue1.push(value);  
 }
 
-
+function getProgram(){ 
+  var program = window.location.href.split('?').pop().split('=').pop(); 
+  return program; 
+}
 
 
 

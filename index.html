@@ -8,9 +8,25 @@
   <script src="./assembler.js"></script>
   <script src="./peg-0.10.0.min.js"></script>
   <script src="./compiler.js"></script>
+  <script type="text/javascript" src="./duel.min.js"></script>
+  
+  <script type="text/javascript">
+    var channel = duel.channel('test');
+
+    channel.on('demo_trigger', function (message) {
+        console.info((new Date).getTime(), message)
+        readQueue2.push(message-0); 
+    });
+
+  </script>
+
 </head>
 <body>
-  <canvas id="myCanvas" width="1600" height="1200" style="border:1px solid #d3d3d3;">
+  <button onclick="channel.broadcast('demo_trigger', 'hello world')">
+    channel.broadcast('demo_trigger', 'hello world')
+  </button>
+
+  <canvas id="myCanvas" width="1200" height="1200" style="border:1px solid #d3d3d3;">
   </canvas>
   <textarea id="write" readonly></textarea>
   <textarea id="read"></textarea>

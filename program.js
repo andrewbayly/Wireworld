@@ -1,14 +1,48 @@
 
-//adder!
-PROGRAM = [
+
+//test client
+PROGRAM = { A : [
+"write(2, 1234);" 
+], 
+
+//test server
+B : [
+"var a = 0; ", 
+"a = read(2);",
+"write(1, a);"   
+] 
+};
+
+
+
+/**
+//adder client
+PROGRAM = { A : [
 "var sum = 0;",
 "var x = 0;",
 "while(true){",
 "  x = read(1);", 
-"  sum = sum + x;",    
+"  write(2, sum);", 
+"  write(2, x);", 
+"  sum = read(2);",    
 "  write(1, sum);",
 "}"   
-];
+], 
+
+//adder server
+B : [
+"var a = 0; ", 
+"var b = 0; ", 
+"var sum = 0; ", 
+"while(true){",
+"  a = read(2);",   
+"  b = read(2);",
+"  sum = a + b;",
+"  write(2, sum);",    
+"}"
+] 
+};
+**/
 
 /**
 //fibonacci series

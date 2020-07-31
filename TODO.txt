@@ -25,13 +25,13 @@ TODO
 - translate the JS into Assembler ( & run it ).
 - extend the Wire compiler accordingly
 
-- write (console)
+- write (console) - DONE
   - add write to grammar
   - add write to compiler
   - implement writeChecker in System, and write value to the console.
   - add a real 'console' on the screen where the writes come out.
 
-- read (console)
+- read (console) - DONE
   - add read to grammar
   - add read to compiler
   - sequence: 
