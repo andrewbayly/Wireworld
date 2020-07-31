@@ -19,36 +19,22 @@ PROGRAM = [
 
 **/
 
-/**
-//fibonacci series
-PROGRAM = [
-"var a = 1;",    //initializer
-"var b = 1;",
-"var c = 0;", 
-"display(1);",   //display
-"display(b);", 
-"", 
-"while(true){",  //whileOpen
-"  c = a + b ;", //add 
-"  a = b;",      //assignment 
-"  b = c;",      
-"  display(b);", 
-"}"              //whileClose
-];
-**/ 
-
-//'  = _ "var" _ var:variable _ "=" _ value:integer _ ";" _ { return {statementType : "initializer", var : var, value:value}; }',
-
 
 GRAMMAR = [  
 'start',
 '  = statement *',
 '',
 'statement',
-'  = display / initializer / whileOpen / whileClose / assignment / add',
+'  = display / initializer / whileOpen / whileClose / assignment / add / write / read',
 '',
 'display',
 '  = _ "display(" _ arg:value _ ")" _ ";" _ { return {statementType : "display", arg : arg}; }',
+'',
+'write',
+'  = _ "write(" _ port:integer _ "," _ val:value _ ")" _ ";" _ { return {statementType : "write", port : port, val : val}; }',
+'',
+'read',
+'  = _ to:variable _ "=" _ "read(" _ port:integer _ ")" _ ";" _ { return {statementType : "read", port : port, to: to }; }',
 '',
 'initializer',
 '  = _ "var" _ VAR:variable _ "=" _ value:integer _ ";" _ { return {statementType : "initializer", VAR : VAR, value:value}; }', 
@@ -105,8 +91,10 @@ function compile(program){
 
   var statements = parse(program);  
   
+  const MAX_REGISTER = 50; 
+  
   var movCounter = 1; 
-  var valuesCounter = 52; 
+  var valuesCounter = MAX_REGISTER ; 
   
   //only one pass! - build the instructions: 
   var movs = []; 
@@ -125,6 +113,23 @@ function compile(program){
     if(statement.statementType == 'display'){
       var register = getRegister(statement.arg);
       movs.push(MOV(0, register));
+      movCounter++; 
+    }
+    else if(statement.statementType == 'write'){
+      var register = getRegister(statement.val);
+      movs.push(MOV(52, register));
+      movCounter++; 
+      
+      movs.push(MOV(51, getRegister(statement.port*2)));
+      movCounter++; 
+    }
+    else if(statement.statementType == 'read'){
+      var to = getRegister(statement.to);
+      
+      movs.push(MOV(51, getRegister(statement.port*2-1))); //will block on read
+      movCounter++; 
+
+      movs.push(MOV(to, 52));
       movCounter++; 
     }
     else if(statement.statementType == 'initializer'){ 
@@ -173,7 +178,7 @@ function compile(program){
   movCounter++; 
   
   var result = movs; 
-  while(result.length + values.length < 52)
+  while(result.length + values.length < MAX_REGISTER)
     result.push(0); 
   result = result.concat(values); 
   

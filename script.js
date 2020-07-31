@@ -29,6 +29,7 @@ var grid = [[],[]];
 var firstSlice = true; 
 
 function drawGrid(slice) {
+
   var oldSlice = (slice == 0) ? 1 : 0; 
 
   var c = document.getElementById("myCanvas");
@@ -63,7 +64,12 @@ function drawGrid(slice) {
   firstSlice = false; 
 }
 
+gen = 0; 
+
 function step(from, to){ 
+
+gen++; 
+//console.log('gen = ' + gen); 
 
   for(var i = 1; i < grid[from].length-1; i++){ 
     for(var j = 1; j < grid[from][1].length-1; j++){ 
@@ -112,6 +118,9 @@ function expandGridSlice(slice, rows, cols){
 
 STARTED = false; 
 
+PAUSED = false; 
+PAUSED_STATE = 0; 
+
 async function start(){ 
 
   STARTED = true; 
@@ -123,7 +132,9 @@ async function start(){
  
   //return; //temporary freeze the computer on the first frame
   
-  while(STARTED){ 
+  while(STARTED){
+  
+    if(!PAUSED){  
     //console.log(k); 
     var start = new Date(); 
     step(from, to); 
@@ -131,15 +142,37 @@ async function start(){
     //console.log('grid elapsed = ' + elapsed); 
   
     start = new Date(); 
-    drawGrid(to); 
+    drawGrid(to); //don't draw anything 
     elapsed = new Date() - start ; 
     //console.log('draw elapsed = ' + elapsed); 
-  
-    await sleep(10); 
           
     var temp = from; 
     from = to; 
     to = temp; 
+
+    if(gen % 96 == 0){ 
+      checkIO(); 
+    }
+
+    }
+    
+    //paused means we are waiting for data to read
+    if(PAUSED){ 
+      if(readQueue.length > 0){ 
+        var value = readQueue.shift();
+        
+        //store value
+        copyValueToRegister(decToBin(value), 52 );   
+
+        //clear the flag
+        copyValueToRegister(decToBin(0), 51 );     
+      
+        PAUSED = false; 
+      }
+    }
+    
+    await sleep(10); 
+
   }
 }
 
@@ -147,6 +180,136 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+var readQueue = []; 
+
+function checkIO(){ 
+  //once we are here, we can assume that we are operating on grid 0
+  
+  var flag = binToDec(readValueFromRegister(51)); 
+  
+  /**
+   note that there may be some noise when the flag is being written
+   - based on experience, we can filter this out.
+  **/
+  if(flag == 0 || flag > 4)
+    return; 
+  
+  if(flag == 1){ 
+    PAUSED = true; 
+    PAUSED_STATE = 1; 
+  }
+  else if(flag == 2){ 
+    var value = binToDec(readValueFromRegister(52));
+    //console.log('write (console): ' + value);
+    document.getElementById('write').value += (value + '\n'); 
+       
+    //clear the flag
+    copyValueToRegister(decToBin(0), 51 );   
+    
+  }
+  else if(flag == 3){ 
+  
+  }
+  else if(flag == 4){ 
+  
+  }
+
+  //set firstSlice to true so that the grid will 
+  //be drawn from scratch again ( this prevents "floating" electrons )
+  firstSlice = true; 
+  
+}
+
+var headX = [ 4,10,16,22,28,34,40,46, 43,37,31,25,19,13, 7, 1 ]; 
+var headY = [ 3, 3, 3, 3, 3, 3, 3, 4,  0, 0, 0, 0, 0, 0, 0, 0 ]; 
+  
+var offsetX_red = [[0], [0], [0], [0], [0], [0], [0], [0, -4], [0], [0], [0], [0], [0], [0], [0], [0]];  
+var offsetY_red = [[0], [0], [0], [0], [0], [0], [0], [0,  1], [0], [0], [0], [0], [0], [0], [0], [0]];  
+
+var offsetX_blue = [[-1], [-1], [-1], [-1], [-1], [-1], [-1], [-1, -2, -3], [1], [1], [1], [1], [1], [1], [1], [1]];  
+var offsetY_blue = [[0], [0], [0], [0], [0], [0], [0],        [1,  1, 1], [0], [0], [0], [0], [0], [0], [0], [0]];  
+
+
+function decToBin(value){ 
+  
+  var bits = []; 
+  
+  for(var i = 0; i < 16; i++){ 
+    var bit = value % 2 ;
+    value = Math.floor(value / 2);
+    bits.unshift(bit);   
+  }
+  
+  return bits; 
+}
+
+function binToDec(bits){ 
+  var result = 0; 
+  var bit = 1; 
+  for(var i = 15; i >= 0; i--){ 
+    result += bit * bits[i]; 
+    bit *= 2; 
+  }
+  return result; 
+}
+
+function readValueFromRegister(register){ 
+
+  var bits = []; 
+  
+  var originX = 689 - 6 * register; 
+  var originY = 61 + 6 * register;
+
+  for(var bitPos = 0; bitPos < 16; bitPos++){ 
+    //var bit = bits[bitPos]; 
+    var color = (bit == 1) ? 3 : 1; 
+    var x = originX + headX[bitPos]; 
+    var y = originY + headY[bitPos]; 
+    var color = grid[0][y][x] ;
+    var bit = color == 3 ? 1 : 0; 
+    bits.push(bit);  
+  }
+
+  var shiftNum = ( 14 + register ) % 16 ; 
+  for(var j = 0; j < shiftNum; j++){ 
+    bits.unshift(bits.pop());
+  } 
+  
+  return bits; 
+}
+
+function copyValueToRegister(value, register){ 
+  
+  //shift enough bits given the register, so that the first bit is
+  //going in the first place
+  var shiftNum = ( 14 + register ) % 16 ; 
+  for(var j = 0; j < shiftNum; j++){ 
+    value.push(value.shift());
+  } 
+
+  //draw the bits onto the grid using the following formula: 
+  //originXY + headXY + offsetXY
+  var originX = 689 - 6 * register; 
+  var originY = 61 + 6 * register;
+
+  var bits = value; 
+  for(var bitPos = 0; bitPos < 16; bitPos++){ 
+    var bit = bits[bitPos]; 
+    for(var i = 0; i < offsetX_red[bitPos].length; i++){ 
+      var color = (bit == 1) ? 3 : 1; 
+      var x = originX + headX[bitPos] + offsetX_red[bitPos][i]; 
+      var y = originY + headY[bitPos] + offsetY_red[bitPos][i]; 
+      grid[0][y][x] = color ; 
+    }    
+    for(var i = 0; i < offsetX_blue[bitPos].length; i++){ 
+      var color = (bit == 1) ? 2 : 1; 
+      var x = originX + headX[bitPos] + offsetX_blue[bitPos][i]; 
+      var y = originY + headY[bitPos] + offsetY_blue[bitPos][i]; 
+      grid[0][y][x] = color ; 
+    }    
+  }
+  
+}
 
 
 
@@ -168,6 +331,16 @@ function initialize(){
   
   //break the top wire: 
   //grid[0][38][641] = 0; 
+  
+  //hide the display
+  var maxj = 683;
+  for(var i = 0; i < 433; i++){ 
+    for(var j = 0; j < maxj; j++){ 
+      grid[0][i][j] = 0; 
+    }
+    maxj--;
+  }
+ 
   
   //now load the program into the registers
   var assembly = compile(PROGRAM); 
@@ -204,57 +377,13 @@ function initialize(){
   }
 
   console.log('binary:'); 
-  console.log(program); 
+  console.log(JSON.stringify(program)); 
 
-  //shift enough bits given the register, so that the first bit is
-  //going in the first place
-  var shiftNum = 15; 
-  
   for(var i = 1; i < program.length; i++){ 
-    for(var j = 0; j < shiftNum; j++){ 
-      program[i].push(program[i].shift());
-    } 
-    shiftNum = ( shiftNum + 1 ) % 16 ; 
+    copyValueToRegister(program[i], i); 
   }
   
-  //draw the bits onto the grid using the following formula: 
-  //originXY + headXY + offsetXY
   
-  var originX = 683; 
-  var originY = 67;
-
-  headX = [ 4,10,16,22,28,34,40,46, 43,37,31,25,19,13, 7, 1 ]; 
-  headY = [ 3, 3, 3, 3, 3, 3, 3, 4,  0, 0, 0, 0, 0, 0, 0, 0 ]; 
-  
-  offsetX_red = [[0], [0], [0], [0], [0], [0], [0], [0, -4], [0], [0], [0], [0], [0], [0], [0], [0]];  
-  offsetY_red = [[0], [0], [0], [0], [0], [0], [0], [0,  1], [0], [0], [0], [0], [0], [0], [0], [0]];  
-
-  offsetX_blue = [[-1], [-1], [-1], [-1], [-1], [-1], [-1], [-1, -2, -3], [1], [1], [1], [1], [1], [1], [1], [1]];  
-  offsetY_blue = [[0], [0], [0], [0], [0], [0], [0],        [1,  1, 1], [0], [0], [0], [0], [0], [0], [0], [0]];  
-
-  for(var register = 1; register <= 52; register++){ 
-    var bits = program[register]; 
-    for(var bitPos = 0; bitPos < 16; bitPos++){ 
-      var bit = bits[bitPos]; 
-      for(var i = 0; i < offsetX_red[bitPos].length; i++){ 
-        var color = (bit == 1) ? 3 : 1; 
-        var x = originX + headX[bitPos] + offsetX_red[bitPos][i]; 
-        var y = originY + headY[bitPos] + offsetY_red[bitPos][i]; 
-        grid[0][y][x] = color ; 
-      }    
-      for(var i = 0; i < offsetX_blue[bitPos].length; i++){ 
-        var color = (bit == 1) ? 2 : 1; 
-        var x = originX + headX[bitPos] + offsetX_blue[bitPos][i]; 
-        var y = originY + headY[bitPos] + offsetY_blue[bitPos][i]; 
-        grid[0][y][x] = color ; 
-      }    
-    }
-    
-    originX -= 6; 
-    originY += 6; 
-  }
-  
-  return; 
 
   function hexToBin(hex){ 
     var table = {  
@@ -291,4 +420,14 @@ function initialize(){
 initialize(); 
 
 start(); 
+
+function clickEnter(){ 
+  var value = document.getElementById("read").value;
+  value = value - 0; 
+  readQueue.push(value);  
+}
+
+
+
+
 

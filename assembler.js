@@ -42,7 +42,7 @@ function assemble(program){
   }
   
   console.log('byte code:'); 
-  console.log(result); 
+  console.log(JSON.stringify(result)); 
   
   return result; 
 
