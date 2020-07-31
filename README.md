@@ -17,8 +17,8 @@ you want to add together - and displays the results. The server does the additio
 
 To run: open one browser window and click Client, then open another and click Server.
 
-[CLIENT](https://andrewbayly.github.io/Wireworld/index.html "Live Demo")
-[SERVER](https://andrewbayly.github.io/Wireworld/index.html "Live Demo")
+[CLIENT](https://andrewbayly.github.io/Wireworld/index.html?program=A "Client")
+[SERVER](https://andrewbayly.github.io/Wireworld/index.html?program=B "Server")
 
 The programs will automatically start when you load the pages. You'll notice that 
 they sometimes they stop running. That means they are waiting - either for user input
