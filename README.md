@@ -1,7 +1,5 @@
 # Wireworld
 
-[LIVE DEMO](https://andrewbayly.github.io/Wireworld/index.html "Live Demo")
-
 The folks at https://www.quinapalus.com/wi-index.html describe a Wireworld computer
 that calculates primes. I took the design of the computer, and ran it on my own 
 implementation of Wireworld (running in the browser), then developed tooling to 
@@ -11,27 +9,23 @@ Finally, a high-level language ( which I call Wire ), and a compiler which trans
 Wire code into assembler - put it all together and we have a functioning programming
 environment for the Wireworld computer. 
 
-To run click the live demo button - the program, stored in program.js will automatically
-compile, assemble, load and start running. 
+## Live Demo
 
-## program
- 
-Currently the Wireworld computer is configured to run headless - there is no display,
-this can be toggled on and off in the code. The program is an adder - here is the code: 
+The demonstration program is an adder. It runs in two browser windows - one is the 
+client and the other is the server. The client accepts input - a list of numbers that 
+you want to add together - and displays the results. The server does the additions.
 
-    var sum = 0;
-    var x = 0;
-    while(true){
-      x = read(1); 
-      sum = sum + x;    
-      write(1, sum);
-    }    
+To run: open one browser window and click Client, then open another and click Server.
 
-read(1) means to read a value from the console - when read is encountered, the program
-halts and waits for the user to enter a value ( you have to click Enter ). Write writes 
-a value to the "console", a text window that appears directly below the computer. 
+[CLIENT](https://andrewbayly.github.io/Wireworld/index.html "Live Demo")
+[SERVER](https://andrewbayly.github.io/Wireworld/index.html "Live Demo")
 
-## Wire
+The programs will automatically start when you load the pages. You'll notice that 
+they sometimes they stop running. That means they are waiting - either for user input
+or for their partner to complete some work and communicate. When the client needs input
+it will pop up and alert box to remind you.
 
-Wire is a subset of JavaScript. 
+# Wire
+
+Wire is intended to look a lot like JavaScript - it's a subset of JavaScript. 
 
