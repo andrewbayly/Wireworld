@@ -249,6 +249,7 @@ function checkIO(){
   if(flag == 1){ 
     PAUSED = true; 
     PAUSED_STATE = 1; 
+    alert('Please enter a value and click Enter button.')
   }
   else if(flag == 2){ 
     var value = binToDec(readValueFromRegister(52));

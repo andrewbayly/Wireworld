@@ -1,4 +1,31 @@
 
+//adder client
+PROGRAM = { A : [
+"var sum = 0;",
+"var x = 0;",
+"while(true){",
+"  x = read(1);", 
+"  write(2, sum);", 
+"  write(2, x);", 
+"  sum = read(2);",    
+"  write(1, sum);",
+"}"   
+], 
+
+//adder server
+B : [
+"var a = 0; ", 
+"var b = 0; ", 
+"var sum = 0; ", 
+"while(true){",
+"  a = read(2);",   
+"  b = read(2);",
+"  sum = a + b;",
+"  write(2, sum);",    
+"}"
+] 
+};
+
 /**
 //test client
 PROGRAM = { A : [
@@ -14,7 +41,8 @@ B : [
 };
 */
 
-//test client
+/**
+//test client  Works!!!
 //problem - the code fails when the server tries to broadcast the
 //sum back to the client - the client doesn't pick up the message.
 PROGRAM = { A : [
@@ -40,6 +68,7 @@ B : [
 "write(2, sum);"   
 ] 
 };
+**/
 
 
 /**
@@ -82,35 +111,6 @@ B : [
 **/
 
 
-
-/**
-//adder client
-PROGRAM = { A : [
-"var sum = 0;",
-"var x = 0;",
-"while(true){",
-"  x = read(1);", 
-"  write(2, sum);", 
-"  write(2, x);", 
-"  sum = read(2);",    
-"  write(1, sum);",
-"}"   
-], 
-
-//adder server
-B : [
-"var a = 0; ", 
-"var b = 0; ", 
-"var sum = 0; ", 
-"while(true){",
-"  a = read(2);",   
-"  b = read(2);",
-"  sum = a + b;",
-"  write(2, sum);",    
-"}"
-] 
-};
-**/
 
 /**
 //fibonacci series
