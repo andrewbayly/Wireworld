@@ -292,6 +292,9 @@ var offsetY_blue = [[0], [0], [0], [0], [0], [0], [0],        [1,  1, 1], [0], [
 
 
 function decToBin(value){ 
+
+  if(value < 0)
+    value = value + 65535 ; 
   
   var bits = []; 
   
@@ -311,6 +314,10 @@ function binToDec(bits){
     result += bit * bits[i]; 
     bit *= 2; 
   }
+  
+  if(result > 32767)
+    result = result - 65535
+  
   return result; 
 }
 

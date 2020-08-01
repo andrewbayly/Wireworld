@@ -55,7 +55,7 @@ GRAMMAR = [
 ' = integer / variable', 
 '',
 'integer "integer"',
-'  = digits:[0-9]+ { return parseInt(digits.join(""), 10); }',  
+'  = negative:"-"? digits:[0-9]+ { console.log(digits, negative); return parseInt( ( negative == "-" ? "-" : "" ) + digits.join(""), 10); }',  
 '',
 'variable',
 '  = letters:[a-z]+ { return letters.join(""); }',  

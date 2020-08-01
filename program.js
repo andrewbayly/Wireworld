@@ -1,4 +1,5 @@
 
+
 //adder client
 PROGRAM = { A : [
 "var sum = 0;",
@@ -26,12 +27,11 @@ B : [
 ] 
 };
 
+
 /**
 //test client
 PROGRAM = { A : [
-"var a = 0;",
-"a = read(2);",  
-"write(1, a);" 
+"write(1, -1);" 
 ], 
 
 //test server
@@ -39,7 +39,8 @@ B : [
 "write(2, 1234);"   
 ] 
 };
-*/
+**/
+
 
 /**
 //test client  Works!!!

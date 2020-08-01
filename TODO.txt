@@ -42,12 +42,8 @@ TODO
        queue, then write zero to 52
      - read copies 52 to destination
      - testing - set values in the read queue   
-- read and write to other computer   
-   - testing!!!
-   
-
-
-
+- read and write to other computer - DONE!   
+   - testing!!! - DONE!
       
 
 IDEAS
