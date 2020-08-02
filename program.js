@@ -28,10 +28,11 @@ B : [
 };
 
 
+
 /**
 //test client
 PROGRAM = { A : [
-"write(1, -1);" 
+"write(1, -2);" 
 ], 
 
 //test server
@@ -40,7 +41,6 @@ B : [
 ] 
 };
 **/
-
 
 /**
 //test client  Works!!!
