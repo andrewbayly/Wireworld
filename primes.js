@@ -101,20 +101,7 @@ function sign(value){
   return (value < 0 ? -32767 : 0);
 }
 
-/**
-What do I need that I don't have already?
 
-1. nested while loops
-2. break statement
-3. if statement
-4. sign function
-5. boolean expressions for if and while
-   variable != 0
-   variable == 0
-6. negative numbers, and (a - b) - DONE!
-7. write(2/3); ... and addressing writes
-
-**/
 
 
 

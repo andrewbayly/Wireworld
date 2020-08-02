@@ -44,6 +44,21 @@ TODO
      - testing - set values in the read queue   
 - read and write to other computer - DONE!   
    - testing!!! - DONE!
+
+- wire features      
+  - nested while loops - DONE!
+  - break statement
+  - if statement
+  - sign function
+  - boolean expressions for if and while
+     variable != 0 
+     variable == 0
+     - while - DONE!
+     - if 
+     
+  - negative numbers, and (a - b) - DONE!  
+  - write(2/3); ... and addressing writes
+   
       
 
 IDEAS

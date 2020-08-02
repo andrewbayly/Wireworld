@@ -1,4 +1,49 @@
 
+PROGRAM = { A : [
+"var x = 1;",
+"var n = 0;",
+"var sum = 0;",
+"while(true){",
+"  n = x;",
+"  while(n != 0){",
+"    write(1, n);",
+"    n = n + -1;",
+"  }",
+"  x = x + 1;", 
+"}"    
+], 
+
+B : [
+] 
+};
+
+
+
+/**
+//while test program
+//print triangle numbers
+PROGRAM = { A : [
+"var x = 1;",
+"var n = 0;",
+"var sum = 0;",
+"while(true){",
+"  n = x;",
+"  sum = 0;",
+"  while(n != 0){",
+"    sum = sum + n;",
+"    n = n + -1;",
+"  }",
+"  write(1, sum);",
+"  x = x + 1;", 
+"}"    
+], 
+
+B : [
+] 
+};
+**/
+
+/**
 
 //adder client
 PROGRAM = { A : [
@@ -27,6 +72,7 @@ B : [
 ] 
 };
 
+**/
 
 
 /**
