@@ -1,4 +1,109 @@
 
+
+
+
+
+/**
+//works as expected!
+PROGRAM = { A : [
+"  var test = 1;",  
+"  while(test != 0){",    
+"    write(1, test);",
+"    test = test + -1;", 
+"  }", 
+"  while(true){",
+"    write(1, 1234);",    
+"  }"
+], 
+
+B : [
+] 
+};
+**/
+
+/**
+//works as expected!
+PROGRAM = { A : [
+"  var test = 1;",  
+"  test = test + -1;",  
+"  while(test != 0){",    
+"    write(1, test);",
+"    test = test + -1;", 
+"  }", 
+"  while(true){",
+"    write(1, 1234);",    
+"  }"
+], 
+
+B : [
+] 
+};
+**/
+
+/**
+//works as expected:
+PROGRAM = { A : [
+"  var k = 0;",
+"  while(true){", 
+"    k = 1; ",    
+"    k = k + -1; ", 
+"  }" //
+], 
+
+B : [
+] 
+};
+**/
+
+
+//prints factorials up to 7!
+//doesn't work - how do I debug it???
+//when I add 1 to -1 the result is -0 not +0
+//does this happen in odd registers??? 
+//seems to be affected by the position of the
+//assignment statement - if I swap the lines: 
+//"k = k + 1" and "product = product + f" then it fails
+
+//update - now it's succeeding the first time into the inner loop
+//but failing the second time ( gets trapped in the inner loop)
+
+//1
+//0
+//-1
+//-2
+PROGRAM = { A : [
+"  var k = 0;",
+"  var n = 1;", 
+"  var f = 1;", //
+"  var product = 0;", 
+//"  var test = -7;", //
+//"  test = test + -1; ", 
+"  while(true){", //   
+"    product = 0;", 
+"    k = n;",
+"    while(k != 0){", 
+//"      write(1, k);",
+"      k = k + -1; ",
+"      product = product + f;",
+"    }",
+"    f = product;", //
+"    write(1, f);", //   
+"    n = n + 1;", // 
+//"    test = n + -8;", //  
+"  }" //
+//"while(true){", 
+//" write(1, 1234);", 
+//"}"
+], 
+
+B : [
+] 
+};
+
+
+
+
+/**
 PROGRAM = { A : [
 "var x = 1;",
 "var n = 0;",
@@ -16,32 +121,26 @@ PROGRAM = { A : [
 B : [
 ] 
 };
+**/
 
 
-
-/**
-//while test program
+/*
+//while test program  - works!
 //print triangle numbers
 PROGRAM = { A : [
-"var x = 1;",
 "var n = 0;",
 "var sum = 0;",
 "while(true){",
-"  n = x;",
-"  sum = 0;",
-"  while(n != 0){",
-"    sum = sum + n;",
-"    n = n + -1;",
-"  }",
+"  n = n + 1;",
+"  sum = sum + n;",
 "  write(1, sum);",
-"  x = x + 1;", 
 "}"    
 ], 
 
 B : [
 ] 
 };
-**/
+*/
 
 /**
 
@@ -178,18 +277,18 @@ PROGRAM = [
 **/
 
 /**
-//counter:
-PROGRAM = [
+//counter: - works!
+PROGRAM = {A:[
 "var counter = 0;", 
 "",
 "while(true){",
-"  display(counter);",  
+"  write(1, counter);",  
 "  counter = counter + 1;", 
 "}"      
-]; 
+], 
+B : [
+]
+}; 
 **/
-
-
-
 
 

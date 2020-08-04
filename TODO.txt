@@ -56,6 +56,13 @@ TODO
      - while - DONE!
      - if 
      
+ - add message that tells me if I'm out of memory - DONE
+ - add constantMap which keeps track of similar constants
+ - remove stop at the end of the program - DONE
+ - add stop() function which I can call if I need to
+ - change branch-back at the end of a while so there is no no-op.
+ - expected saving: 8 instructions    
+     
   - negative numbers, and (a - b) - DONE!  
   - write(2/3); ... and addressing writes
    

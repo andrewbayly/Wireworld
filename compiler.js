@@ -115,6 +115,9 @@ function compile(program){
   //maps variables to their locations
   var variableMap = {}; 
   
+  //maps constants to their locations
+  var constantMap = {}; 
+  
   //location of the last while loop found:
   whileOpen = []; 
     
@@ -200,21 +203,25 @@ function compile(program){
       console.log('w:'); 
       console.log(w);  
       
+      //get previous instruction...
+      var prevMove = movs.pop(); 
+      
       //branch to a:
-      values.unshift('' + w.a); 
-      movs.push(MOV(63, valuesCounter)); 
-      valuesCounter--
+      movs.push(MOV(63, getRegister(w.a))); 
       movCounter++; 
+
+      //...and put it in the delay slot
+      movs.push(prevMove); 
     
       //no-op in delay slot:
-      movs.push(MOV(1, 1)); 
-      movCounter++; 
+      //movs.push(MOV(1, 1)); 
+      //movCounter++; 
       
       if(w.boolean != 'true'){
         //set the values specified in the w object()
         w.c = movCounter;
-        console.log('c = '); 
-        console.log(w.c); 
+        //console.log('c = '); 
+        //console.log(w.c); 
         
         movs[w.R55] = MOV(55, getRegister(w[w.R55_Rs])); 
         movs[w.R57] = MOV(57, getRegister(w[w.R57_Rs])); 
@@ -243,6 +250,7 @@ function compile(program){
     }
   }  
   
+  /*
   //stop:
   movs.push(MOV(63, valuesCounter)); 
   values.unshift('' + movCounter)
@@ -251,11 +259,16 @@ function compile(program){
   
   movs.push(MOV(1, 1)); 
   movCounter++; 
+  */
   
   var result = movs; 
   while(result.length + values.length < MAX_REGISTER)
     result.push(0); 
   result = result.concat(values); 
+  
+  if(result.length > MAX_REGISTER){ 
+    alert('Maximum Size of program exceeded. Program Size= ' + result.length + ", available size= " + MAX_REGISTER); 
+  }
   
   for(var i = 0; i < result.length; i++){ 
     result[i] = '' + (i + 1) + ' ' + result[i]; 
@@ -285,9 +298,16 @@ function compile(program){
   function getRegister(value){ 
     var result = null; 
     if(typeof value == 'number'){ 
-      values.unshift('' + value)
-      result = valuesCounter;
-      valuesCounter--;  
+      if(value in constantMap){
+        result = constantMap[value]; 
+      }
+      else { 
+        values.unshift('' + value)
+        result = valuesCounter;
+        valuesCounter--;
+        
+        constantMap[value] = result; 
+      }  
     }  
     else
     {

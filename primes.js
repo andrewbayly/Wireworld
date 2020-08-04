@@ -7,17 +7,16 @@ function calculatePrimes(){
   var testd = 0;                               
   console.log(p); 
   p = 3; 
-  while(p < 100){ //while(true){ 
+  while(true){ 
     q = -3; 
     test = q + p;   
     while(test != 0){                         //!
       remainder = p; 
-      //testc = 0;
       testd = 0;                              
       while(testd == 0){                       //!
         remainder = remainder + q; 
         testc = remainder + -1; 
-        testd = sign(testc);         
+        testd = sign(testc);                  //! 
       }
       if(remainder == 0){                      //! 
         break;
@@ -48,6 +47,7 @@ function calculatePrimesA(){
   }
 }
 
+//returns 0 if p is prime
 function isPrime(p){ 
   var test = 0; 
   var q = 0; 
@@ -92,8 +92,29 @@ function getRemainder(p, q) {
   //} 
 }
 
+function calculateFactorials(){ 
+  var n = 1; 
+  var f = 1;
+  var product = 0; 
+  var k = 0;
+  var test = -8;  
+  while(test != 0){    
+    product = 0; 
+    k = n;
+    while(k != 0){ 
+      console.log(k);
+      product = product + f;
+      k = k + -1; 
+    }
+    f = product;
+    n = n + 1;  
+    test = n + -8;   
+  }
+}
 
-calculatePrimesA(); 
+
+//calculatePrimesA(); 
+calculateFactorials(); 
 
 //returns 0 if value is positive or zero
 //and non-zero if value is negative
