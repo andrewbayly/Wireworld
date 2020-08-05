@@ -55,71 +55,7 @@ B : [
 };
 **/
 
-/*
-//product (attempt to reproduce minus zero problem)
-//initialize two numbers a and b, and calculate the product
-//success - displays 1 = 1 * 1
-PROGRAM = { A : [
-"var a = 1;",
-"var b = 1;", //
-"var product = 0;", 
-"while(a != 0){", 
-"  a = a + -1; ",
-"  product = product + b;",
-"}",
-"write(1, product);", //   
-"while(true){", 
-" write(1, 1234);", 
-"}"
-], 
 
-B : [
-] 
-};
-*/
-
-//triangle program - to test!!!
-PROGRAM = { A : [
-"var a = 2;",
-"var tri = 0;", 
-"while(a != 0){", 
-"  tri = tri + a;",
-"  a = a + -1; ",
-"}",
-"write(1, tri);", //   
-"while(true){", 
-" write(1, 1234);", 
-"}"
-], 
-
-B : [
-] 
-};
-
-/**
-//product (attempt to reproduce minus zero problem)
-//success - works as expected
-PROGRAM = { A : [
-"var a = 2;",
-//"var b = 1;", //
-//"var product = 0;", 
-"while(a != 0){", 
-"  a = a + -1; ",
-//"  product = product + b;",
-//"  write(1, a);", //   
-"}",
-//"write(1, product);", //   
-"while(true){", 
-" write(1, 1234);", 
-"}"
-], 
-
-B : [
-] 
-};
-*/
-
-/**
 //product (attempt to reproduce minus zero problem)
 //initialize two numbers a and b, and calculate the product
 //fails - a goes to minus zero, and the first loop never ends
@@ -131,47 +67,14 @@ PROGRAM = { A : [
 "  a = a + -1; ",
 "  product = product + b;",
 "}",
-"write(1, product);", //   
-"while(true){", 
-" write(1, 1234);", 
-"}"
+"display(product);",    
+"stop();", 
 ], 
 
 B : [
 ] 
 };
-**/
 
-
-/**
-//factorials (attempt to reproduce minus zero problem)
-//problem found!!!
-PROGRAM = { A : [
-"  var k = 2;",
-//"  var n = 2;", 
-"  var f = 1;", //
-"  var product = 0;", 
-//"  while(true){", //   
-//"    product = 0;", 
-//"    k = n;",
-"    while(k != 0){", 
-"      k = k + -1; ",
-//"      write(1, k);", 
-"      product = product + f;",
-"    }",
-//"    f = product;", //
-"    write(1, product);", //   
-//"    n = n + 1;", // 
-//"  }" //
-"while(true){", 
-" write(1, 1234);", 
-"}"
-], 
-
-B : [
-] 
-};
-**/
 
 /**
 //prints factorials up to 7!

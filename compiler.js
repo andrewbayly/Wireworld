@@ -20,27 +20,33 @@ PROGRAM = [
 **/
 
 
-GRAMMAR = [  
+GRAMMAR = [ 
+'{',  
+'  var line = 0;',  
+'}', 
 'start',
 '  = statement *',
 '',
 'statement',
-'  = display / initializer / whileOpen / whileClose / assignment / add / write / read',
+'  = display / initializer / whileOpen / whileClose / assignment / add / write / read / stop',
 '',
 'display',
-'  = _ "display(" _ arg:value _ ")" _ ";" _ { return {statementType : "display", arg : arg}; }',
+'  = _ "display(" _ arg:value _ ")" _ ";" _ { return {line : line++, statementType : "display", arg : arg}; }',
+'',
+'stop',
+'  = _ "stop(" _ ")" _ ";" _ { return {line : line++, statementType : "stop" }; }',
 '',
 'write',
-'  = _ "write(" _ port:integer _ "," _ val:value _ ")" _ ";" _ { return {statementType : "write", port : port, val : val}; }',
+'  = _ "write(" _ port:integer _ "," _ val:value _ ")" _ ";" _ {  return {line : line++, statementType : "write", port : port, val : val}; }',
 '',
 'read',
-'  = _ to:variable _ "=" _ "read(" _ port:integer _ ")" _ ";" _ { return {statementType : "read", port : port, to: to }; }',
+'  = _ to:variable _ "=" _ "read(" _ port:integer _ ")" _ ";" _ { return {line : line++, statementType : "read", port : port, to: to }; }',
 '',
 'initializer',
-'  = _ "var" _ VAR:variable _ "=" _ value:integer _ ";" _ { return {statementType : "initializer", VAR : VAR, value:value}; }', 
+'  = _ "var" _ VAR:variable _ "=" _ value:integer _ ";" _ {  return {line : line++, statementType : "initializer", VAR : VAR, value:value}; }', 
 '',
 'whileOpen',
-'  = _ "while(" _ boolean:boolean _ ")" _ "{" _ { return {statementType : "whileOpen", boolean:boolean}; }',
+'  = _ "while(" _ boolean:boolean _ ")" _ "{" _ { return {line : line++, statementType : "whileOpen", boolean:boolean}; }',
 '',
 'boolean',
 '  = TRUE / boolean_expression',
@@ -55,13 +61,13 @@ GRAMMAR = [
 '  = "!=" / "=="',
 '',
 'whileClose',
-'  = _ "}" _ { return {statementType : "whileClose"}; }',
+'  = _ "}" _ { return {line : line++, statementType : "whileClose"}; }',
 '',
 'assignment',
-'  = _ to:variable _ "=" _ from:value _ ";" _ { return {statementType : "assignment", to:to, from:from}; }',
+'  = _ to:variable _ "=" _ from:value _ ";" _ {  return {line : line++, statementType : "assignment", to:to, from:from}; }',
 '',
 'add',
-'  = _ to:variable _ "=" _ from1:value _ "+" _ from2:value _ ";" _ { return {statementType : "add", to:to, from1:from1, from2:from2}; }',
+'  = _ to:variable _ "=" _ from1:value _ "+" _ from2:value _ ";" _ {  return {line : line++, statementType : "add", to:to, from1:from1, from2:from2}; }',
 '',
 'value', 
 ' = integer / variable', 
@@ -103,7 +109,7 @@ function compile(program){
 
   var statements = parse(program);  
   
-  const MAX_REGISTER = 50; 
+  MAX_REGISTER = 50; 
   
   var movCounter = 1; //note that movCounter is movs index + 1
   var valuesCounter = MAX_REGISTER ; 
@@ -127,12 +133,23 @@ function compile(program){
   
     if(statement.statementType == 'display'){
       var register = getRegister(statement.arg);
-      movs.push(MOV(0, register));
+      movs.push(MOV(0, register, program[statement.line]));
       movCounter++; 
+    }
+    else if(statement.statementType == 'stop'){
+       
+      movs.push(MOV(63, valuesCounter, program[statement.line])); 
+      values.unshift('' + movCounter)
+      valuesCounter--; 
+      movCounter++; 
+  
+      movs.push(MOV(1, 1)); 
+      movCounter++; 
+  
     }
     else if(statement.statementType == 'write'){
       var register = getRegister(statement.val);
-      movs.push(MOV(52, register));
+      movs.push(MOV(52, register, program[statement.line]));
       movCounter++; 
       
       movs.push(MOV(51, getRegister(statement.port*2)));
@@ -141,7 +158,7 @@ function compile(program){
     else if(statement.statementType == 'read'){
       var to = getRegister(statement.to);
       
-      movs.push(MOV(51, getRegister(statement.port*2-1))); //will block on read
+      movs.push(MOV(51, getRegister(statement.port*2-1), program[statement.line])); //will block on read
       movCounter++; 
 
       movs.push(MOV(to, 52));
@@ -194,6 +211,8 @@ function compile(program){
         
         w.b = movCounter;  
         
+        w.comment = program[statement.line] ; 
+        
         whileOpen.push(w); 
       }     
     }
@@ -207,7 +226,7 @@ function compile(program){
       var prevMove = movs.pop(); 
       
       //branch to a:
-      movs.push(MOV(63, getRegister(w.a))); 
+      movs.push(MOV(63, getRegister(w.a), program[statement.line])); 
       movCounter++; 
 
       //...and put it in the delay slot
@@ -223,7 +242,7 @@ function compile(program){
         //console.log('c = '); 
         //console.log(w.c); 
         
-        movs[w.R55] = MOV(55, getRegister(w[w.R55_Rs])); 
+        movs[w.R55] = MOV(55, getRegister(w[w.R55_Rs]), w.comment); 
         movs[w.R57] = MOV(57, getRegister(w[w.R57_Rs])); 
         
       }
@@ -231,7 +250,7 @@ function compile(program){
     else if(statement.statementType == 'assignment'){ 
       var from = getRegister(statement.from); 
       var to = getRegister(statement.to); 
-      movs.push(MOV(to, from)); 
+      movs.push(MOV(to, from, program[statement.line])); 
       movCounter++; 
       console.log('movCounter:'); 
       console.log(movCounter); 
@@ -241,7 +260,7 @@ function compile(program){
       var to = getRegister(statement.to); 
       var from1 = getRegister(statement.from1); 
       var from2 = getRegister(statement.from2); 
-      movs.push(MOV(60, from1)); 
+      movs.push(MOV(60, from1, program[statement.line])); 
       movCounter++; 
       movs.push(MOV(61, from2)); 
       movCounter++; 
@@ -250,16 +269,7 @@ function compile(program){
     }
   }  
   
-  /*
-  //stop:
-  movs.push(MOV(63, valuesCounter)); 
-  values.unshift('' + movCounter)
-  valuesCounter--; 
-  movCounter++; 
-  
-  movs.push(MOV(1, 1)); 
-  movCounter++; 
-  */
+ 
   
   var result = movs; 
   while(result.length + values.length < MAX_REGISTER)
@@ -271,7 +281,7 @@ function compile(program){
   }
   
   for(var i = 0; i < result.length; i++){ 
-    result[i] = '' + (i + 1) + ' ' + result[i]; 
+    result[i] = '' + format((i + 1), 2) + ' ' + result[i]; 
   }
   
   //console.log(result); 
@@ -291,8 +301,12 @@ function compile(program){
   
   return result;
   
-  function MOV(Rd, Rs){ 
-    return "MOV R" + Rd + " R" + Rs ; 
+  function MOV(Rd, Rs, comment){ 
+    var result = format( "MOV R" + Rd + " R" + Rs, 12) ;
+    result = result + ';' ; 
+    if(typeof comment != 'undefined')
+      result = result + ' ' + comment ; 
+    return result;  
   }
 
   function getRegister(value){ 
@@ -314,6 +328,15 @@ function compile(program){
       result = variableMap[value]; 
     }
     return result; 
+  }
+  
+  function format(str, width){
+    str = '' + str ; 
+    while(str.length < width){ 
+      str = str + ' ' ;
+    }  
+    console.log('[' + str + ']'); 
+    return str;    
   }
    
 }

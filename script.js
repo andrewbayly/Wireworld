@@ -185,6 +185,10 @@ async function start(){
         checkIO(); 
       }
     
+      if(gen % 2304 == 0){ 
+        hackCheck(); 
+      }
+    
       var elapsed = new Date() - start ; 
       //console.log('elapsed = ' + elapsed); 
 
@@ -233,6 +237,16 @@ function sleep(ms) {
 var readQueue1 = []; 
 
 var readQueue2 = []; 
+
+/**
+ hack: if any value is minus zero, set it back to zero
+**/
+function hackCheck(){ 
+  for(var i = 1; i <= MAX_REGISTER; i++){ 
+    if( binToDec(readValueFromRegister(i)) == 0 )
+      copyValueToRegister(decToBin(0), i ); 
+  }
+}
 
 function checkIO(){ 
   //once we are here, we can assume that we are operating on grid 0
