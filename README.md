@@ -11,21 +11,15 @@ environment for the Wireworld computer.
 
 ## Live Demo
 
-The demonstration program is an adder. It runs in two browser windows - one is the 
-client and the other is the server. The client accepts input - a list of numbers that 
-you want to add together - and displays the results. The server does the additions.
+The demonstration program calculates factorials: 
 
-To run: open one browser window and click Client, then open another and click Server.
+[LIVE DEMO](https://andrewbayly.github.io/Wireworld/index.html?program=A "Live Demo")
 
-[CLIENT](https://andrewbayly.github.io/Wireworld/index.html?program=A "Client")
-[SERVER](https://andrewbayly.github.io/Wireworld/index.html?program=B "Server")
-
-The programs will automatically start when you load the pages. You'll notice that 
-they sometimes they stop running. That means they are waiting - either for user input
-or for their partner to complete some work and communicate. When the client needs input
-it will pop up and alert box to remind you.
+The programs will automatically start when you load the pages. 
 
 # Wire
 
-Wire is intended to look a lot like JavaScript - it's a subset of JavaScript. 
+Wire is intended to look a lot like JavaScript - it's a subset of JavaScript.
+
+ 
 
