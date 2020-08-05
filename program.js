@@ -1,61 +1,5 @@
 
 
-
-
-
-/**
-//works as expected!
-PROGRAM = { A : [
-"  var test = 1;",  
-"  while(test != 0){",    
-"    write(1, test);",
-"    test = test + -1;", 
-"  }", 
-"  while(true){",
-"    write(1, 1234);",    
-"  }"
-], 
-
-B : [
-] 
-};
-**/
-
-/**
-//works as expected!
-PROGRAM = { A : [
-"  var test = 1;",  
-"  test = test + -1;",  
-"  while(test != 0){",    
-"    write(1, test);",
-"    test = test + -1;", 
-"  }", 
-"  while(true){",
-"    write(1, 1234);",    
-"  }"
-], 
-
-B : [
-] 
-};
-**/
-
-/**
-//works as expected:
-PROGRAM = { A : [
-"  var k = 0;",
-"  while(true){", 
-"    k = 1; ",    
-"    k = k + -1; ", 
-"  }" //
-], 
-
-B : [
-] 
-};
-**/
-
-
 //product (attempt to reproduce minus zero problem)
 //initialize two numbers a and b, and calculate the product
 //fails - a goes to minus zero, and the first loop never ends
@@ -74,7 +18,6 @@ PROGRAM = { A : [
 B : [
 ] 
 };
-
 
 /**
 //prints factorials up to 7!
@@ -122,48 +65,6 @@ B : [
 };
 **/
 
-
-
-
-
-/**
-PROGRAM = { A : [
-"var x = 1;",
-"var n = 0;",
-"var sum = 0;",
-"while(true){",
-"  n = x;",
-"  while(n != 0){",
-"    write(1, n);",
-"    n = n + -1;",
-"  }",
-"  x = x + 1;", 
-"}"    
-], 
-
-B : [
-] 
-};
-**/
-
-
-/*
-//while test program  - works!
-//print triangle numbers
-PROGRAM = { A : [
-"var n = 0;",
-"var sum = 0;",
-"while(true){",
-"  n = n + 1;",
-"  sum = sum + n;",
-"  write(1, sum);",
-"}"    
-], 
-
-B : [
-] 
-};
-*/
 
 /**
 
