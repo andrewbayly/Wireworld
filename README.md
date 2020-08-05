@@ -15,7 +15,9 @@ The demonstration program calculates factorials:
 
 [LIVE DEMO](https://andrewbayly.github.io/Wireworld/index.html?program=A "Live Demo")
 
-The programs will automatically start when you load the pages. 
+The programs will automatically start when you load the pages. Open the JavaScript
+console to see the different versions of the program: source code, assembler, byte code
+and binary. 
 
 # Wire
 
