@@ -257,9 +257,11 @@ function compile(program){
       var to = getRegister(statement.to); 
       var from1 = getRegister(statement.from1); 
       var from2 = getRegister(statement.from2); 
-      movs.push(MOV(60, from1, program[statement.line])); 
+      movs.push(MOV(61, from2, program[statement.line])); 
       movCounter++; 
-      movs.push(MOV(61, from2)); 
+      movs.push(MOV(60, from2)); 
+      movCounter++; 
+      movs.push(MOV(60, from1)); 
       movCounter++; 
       movs.push(MOV(to, 61)); 
       movCounter++; 

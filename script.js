@@ -184,11 +184,11 @@ async function start(){
       if(gen % 96 == 0){ 
         checkIO(); 
       }
-    
+/*    
       if(gen % 2304 == 0){ 
         hackCheck(); 
       }
-    
+*/    
       var elapsed = new Date() - start ; 
       //console.log('elapsed = ' + elapsed); 
 

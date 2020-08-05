@@ -3,6 +3,10 @@
 //product (attempt to reproduce minus zero problem)
 //initialize two numbers a and b, and calculate the product
 //fails - a goes to minus zero, and the first loop never ends
+//fixed - by adding an extra instruction into every add: 
+//first we load the second operand into both 61 and 60, which 
+//sets(or clears) the carry-bit, then load the first operand into 
+//60. This means that 1-1 will equal zero not minus zero.
 PROGRAM = { A : [
 "var a = 2;",
 "var b = 1;", //
