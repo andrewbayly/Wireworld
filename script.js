@@ -455,7 +455,7 @@ function initializeGrid(){
     gridSpan.push(obj); 
   }
   
-  console.log(gridSpan); 
+  //console.log(gridSpan); 
   
 }
 

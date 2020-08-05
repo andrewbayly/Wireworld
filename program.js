@@ -1,5 +1,5 @@
 
-
+/**
 //product (attempt to reproduce minus zero problem)
 //initialize two numbers a and b, and calculate the product
 //fails - a goes to minus zero, and the first loop never ends
@@ -18,8 +18,9 @@ PROGRAM = { A : [
 B : [
 ] 
 };
+**/
 
-/**
+
 //prints factorials up to 7!
 //doesn't work - how do I debug it???
 //when I add 1 to -1 the result is -0 not +0
@@ -40,30 +41,22 @@ PROGRAM = { A : [
 "  var n = 1;", 
 "  var f = 1;", //
 "  var product = 0;", 
-//"  var test = -7;", //
-//"  test = test + -1; ", 
 "  while(true){", //   
 "    product = 0;", 
 "    k = n;",
 "    while(k != 0){", 
-//"      write(1, k);",
 "      k = k + -1; ",
 "      product = product + f;",
 "    }",
 "    f = product;", //
 "    write(1, f);", //   
 "    n = n + 1;", // 
-//"    test = n + -8;", //  
 "  }" //
-//"while(true){", 
-//" write(1, 1234);", 
-//"}"
 ], 
 
 B : [
 ] 
 };
-**/
 
 
 /**

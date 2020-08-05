@@ -170,8 +170,8 @@ function compile(program){
       valuesCounter--;  
     }
     else if(statement.statementType == 'whileOpen'){ 
-      console.log('while: '); 
-      console.log(statement);
+      //console.log('while: '); 
+      //console.log(statement);
       
       if(statement.boolean == 'true'){  
         whileOpen.push({ boolean:'true', a: movCounter});
@@ -219,8 +219,8 @@ function compile(program){
     else if(statement.statementType == 'whileClose'){
       var w = whileOpen.pop();
       
-      console.log('w:'); 
-      console.log(w);  
+      //console.log('w:'); 
+      //console.log(w);  
       
       //get previous instruction...
       var prevMove = movs.pop(); 
@@ -252,9 +252,6 @@ function compile(program){
       var to = getRegister(statement.to); 
       movs.push(MOV(to, from, program[statement.line])); 
       movCounter++; 
-      console.log('movCounter:'); 
-      console.log(movCounter); 
-      
     }
     else if(statement.statementType == 'add'){ 
       var to = getRegister(statement.to); 
@@ -335,7 +332,6 @@ function compile(program){
     while(str.length < width){ 
       str = str + ' ' ;
     }  
-    console.log('[' + str + ']'); 
     return str;    
   }
    
